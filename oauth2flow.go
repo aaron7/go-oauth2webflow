@@ -22,28 +22,40 @@ type OAuth2Config struct {
 }
 
 // AuthCodeFlow attempts the OAuth2 Authorization Code Flow
-func AuthCodeFlow(settings OAuth2Config) AccessToken {
+func AuthCodeFlow(settings OAuth2Config) (AccessToken, error) {
 	responseType := "code"
 	redirectURI := "http://localhost:5000"
 	secretState := randomString(10)
 
+	url, err := createAuthorizationURL(settings, responseType, redirectURI, secretState)
+	if err != nil {
+		return AccessToken{}, err
+	}
+
 	// Open the authorize url in the system web browser
-	url := createAuthorizationURL(settings, responseType, redirectURI, secretState)
 	log.Printf("If a web browser window did not open, please visit: %v", url)
-	openURLBrowser(url)
+	err = openURLBrowser(url)
+	if err != nil {
+		return AccessToken{}, err
+	}
 
 	// Make a channel for the AccessToken to return (with buffer of 1 so we don't block)
 	c := make(chan AccessToken, 1)
 
-	// Start the callback http server
+	// Create a listener which we can close
 	l, err := net.Listen("tcp", ":5000")
 	if err != nil {
-		log.Fatal(err)
+		return AccessToken{}, err
 	}
-	http.Serve(l, callbackHandler(l, settings, redirectURI, secretState, c))
+
+	// Start the callback http server
+	err = http.Serve(l, callbackHandler(l, settings, redirectURI, secretState, c))
+	if err != nil {
+		return AccessToken{}, err
+	}
 
 	// Return the token from the channel
-	return <-c
+	return <-c, nil
 }
 
 // AccessToken represents a response from the Token url
@@ -105,10 +117,10 @@ func callbackHandler(l net.Listener, settings OAuth2Config, redirectURI string, 
 	})
 }
 
-func createAuthorizationURL(settings OAuth2Config, responseType string, redirectURL string, state string) string {
+func createAuthorizationURL(settings OAuth2Config, responseType string, redirectURL string, state string) (string, error) {
 	u, err := url.Parse(settings.AuthorizeURL)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	q := u.Query()
@@ -119,5 +131,5 @@ func createAuthorizationURL(settings OAuth2Config, responseType string, redirect
 	q.Set("scope", settings.Scope)
 
 	u.RawQuery = q.Encode()
-	return u.String()
+	return u.String(), nil
 }
