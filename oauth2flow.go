@@ -21,7 +21,16 @@ type OAuth2Config struct {
 	Scope        string
 }
 
-// AuthCodeFlow attempts the OAuth2 Authorization Code Flow
+// AccessToken represents an authorized access token
+type AccessToken struct {
+	AccessToken  string `json:"access_token"`
+	TokenType    string `json:"token_type"`
+	Scope        string `json:"scope"`
+	ExpiresIn    int    `json:"expires_in"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+// AuthCodeFlow attempts the OAuth2 Authorization Code Flow with a browser
 func AuthCodeFlow(settings OAuth2Config) (AccessToken, error) {
 	responseType := "code"
 	redirectURI := "http://localhost:5000"
@@ -58,15 +67,6 @@ func AuthCodeFlow(settings OAuth2Config) (AccessToken, error) {
 	return <-c, nil
 }
 
-// AccessToken represents a response from the Token url
-type AccessToken struct {
-	AccessToken  string `json:"access_token"`
-	TokenType    string `json:"token_type"`
-	Scope        string `json:"scope"`
-	ExpiresIn    int    `json:"expires_in"`
-	RefreshToken string `json:"refresh_token"`
-}
-
 func callbackHandler(l net.Listener, settings OAuth2Config, redirectURI string, secretState string, c chan AccessToken) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		code := r.URL.Query().Get("code")
@@ -91,7 +91,7 @@ func callbackHandler(l net.Listener, settings OAuth2Config, redirectURI string, 
 		}
 		client := &http.Client{Transport: tr}
 
-		// Make the POST request to the token url
+		// Create a POST request to the token url
 		req, _ := http.NewRequest("POST", settings.TokenURL, bytes.NewBufferString(form.Encode()))
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
@@ -99,6 +99,8 @@ func callbackHandler(l net.Listener, settings OAuth2Config, redirectURI string, 
 		clientIDSecret := settings.ClientID + ":" + settings.ClientSecret
 		encodedClientIDSecret := base64.StdEncoding.EncodeToString([]byte(clientIDSecret))
 		req.Header.Add("Authorization", "Basic "+encodedClientIDSecret)
+
+		// Make the POST request
 		resp, _ := client.Do(req)
 
 		// Decode the AccessToken response
@@ -106,13 +108,13 @@ func callbackHandler(l net.Listener, settings OAuth2Config, redirectURI string, 
 		defer resp.Body.Close()
 		_ = json.NewDecoder(resp.Body).Decode(&token)
 
-		// Close window using JavaScript
+		// Close the browser window using JavaScript
 		fmt.Fprint(w, `<script type="text/javascript">window.close()</script>`)
 
-		// Send back AccessToken through channel
+		// Send back AccessToken through the channel
 		c <- token
 
-		// Stop HTTP server
+		// Stop the HTTP server
 		l.Close()
 	})
 }

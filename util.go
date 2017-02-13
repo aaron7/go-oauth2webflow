@@ -13,7 +13,7 @@ func init() {
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-// RandomString returns a random string of n characters
+// randomString returns a random string of n characters
 func randomString(n int) string {
 	b := make([]rune, n)
 	for i := range b {
@@ -22,7 +22,7 @@ func randomString(n int) string {
 	return string(b)
 }
 
-// OpenURLBrowser opens a url in the system browser
+// openURLBrowser opens a url in the system browser
 func openURLBrowser(url string) error {
 	var cmd string
 	var args []string
