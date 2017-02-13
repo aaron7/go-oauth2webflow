@@ -27,15 +27,15 @@ func main() {
 }
 ```
 
-## Package oauth2flow
+## Package `oauth2flow`
 
-### func AuthCodeFlow
+### func `AuthCodeFlow`
 ```go
 func AuthCodeFlow(config OAuth2Config) AccessToken
 ```
 
 
-### type OAuth2Config
+### type `OAuth2Config`
 
 ```go
 type OAuth2Config struct {
@@ -47,7 +47,7 @@ type OAuth2Config struct {
 }
 ```
 
-### type AccessToken
+### type `AccessToken`
 
 ```go
 type AccessToken struct {
