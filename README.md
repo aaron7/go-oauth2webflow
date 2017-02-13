@@ -7,6 +7,8 @@ endpoint without copying and pasting codes.
 The package opens the OAuth2 authorize url with the system browser with the `redirect_uri` set as
 `http://localhost:5000` and listens for the callback. An AccessToken is then returned.
 
+Please ensure `http://localhost:5000` is set as an authorized redirect URI.
+
 Note: created this project as part of learning go
 
 ## Example
