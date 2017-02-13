@@ -24,7 +24,7 @@ func main() {
 		ClientSecret: "b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1",
 		Scope:        "",
 	}
-	token, err := oauth2flow.AuthCodeFlow()
+	token, err := oauth2flow.AuthCodeFlow(config)
 	log.Printf("AccessToken: %+v", token)
 }
 ```
