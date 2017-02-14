@@ -1,11 +1,11 @@
-go-oauth2flow
+go-oauth2webflow
 =============
 
 This simple package allows you to authorize with an OAuth2 Authorization Code Flow
-endpoint without copying and pasting codes.
+endpoint without copying and pasting codes. It uses golang.org/x/oauth2.
 
 The package opens the OAuth2 authorize url with the system browser and the `redirect_uri` set as
-`http://localhost:5000`, and listens for the callback. An AccessToken is then returned.
+`http://localhost:5000`, and listens for the callback. An oauth2.Token is then returned.
 
 Please ensure `http://localhost:5000` is set as an authorized redirect URI.
 
@@ -16,50 +16,30 @@ Note: created this project as part of learning go
 ```go
 package main
 
-import "github.com/aaron7/go-oauth2flow"
+import (
+	"context"
+	"log"
+
+	"github.com/aaron7/go-oauth2webflow"
+	"golang.org/x/oauth2"
+)
 
 func main() {
-	config := oauth2flow.OAuth2Config{
-		AuthorizeURL: "https://accounts.spotify.com/authorize",
-		TokenURL:     "https://accounts.spotify.com/api/token",
+	ctx := context.Background()
+	conf := &oauth2.Config{
 		ClientID:     "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
 		ClientSecret: "b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1",
-		Scope:        "",
+		Scopes:       []string{},
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  "https://accounts.spotify.com/authorize",
+			TokenURL: "https://accounts.spotify.com/api/token",
+		},
 	}
-	token, err := oauth2flow.AuthCodeFlow(config)
-	log.Printf("AccessToken: %+v", token)
+
+	token, err := oauth2webflow.BrowserAuthCodeFlow(ctx, conf)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Token: %+v", token)
 }
 ```
-
-## Package `oauth2flow`
-
-### func `AuthCodeFlow`
-```go
-func AuthCodeFlow(config OAuth2Config) (AccessToken, error)
-```
-
-
-### type `OAuth2Config`
-
-```go
-type OAuth2Config struct {
-	AuthorizeURL string
-	TokenURL     string
-	ClientID     string
-	ClientSecret string
-	Scope        string
-}
-```
-
-### type `AccessToken`
-
-```go
-type AccessToken struct {
-	AccessToken  string
-	TokenType    string
-	Scope        string
-	ExpiresIn    int
-	RefreshToken string
-}
-```
-

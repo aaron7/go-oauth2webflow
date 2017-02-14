@@ -1,4 +1,4 @@
-package oauth2flow
+package oauth2webflow
 
 import (
 	"math/rand"
