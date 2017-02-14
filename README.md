@@ -2,7 +2,7 @@ go-oauth2webflow
 =============
 
 This simple package allows you to authorize with an OAuth2 Authorization Code Flow
-endpoint without copying and pasting codes. It uses golang.org/x/oauth2.
+endpoint without copying and pasting codes. It uses [golang.org/x/oauth2](https://golang.org/x/oauth2).
 
 The package opens the OAuth2 authorize url with the system browser and the `redirect_uri` set as
 `http://localhost:5000`, and listens for the callback. An oauth2.Token is then returned.
