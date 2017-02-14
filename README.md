@@ -11,6 +11,8 @@ Please ensure `http://localhost:5000` is set as an authorized redirect URI.
 
 Note: created this project as part of learning go
 
+Todo: tests
+
 ## Example
 
 ```go
