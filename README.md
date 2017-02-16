@@ -8,8 +8,8 @@ endpoint without having to copy and paste codes from the callback url. It uses
 [golang.org/x/oauth2](https://golang.org/x/oauth2).
 
 The package opens the authorize url with the system browser, setting
-`redirect_uri` set to `http://localhost:5000`, and listens for the callback
-using a http server. If the flow completes, it returns an `oauth2.Token` and
+`redirect_uri` to `http://localhost:5000`, and listens for the callback using a
+http server. If the flow completes, it returns an `oauth2.Token` and
 automatically closes the browser window.
 
 Please ensure `http://localhost:5000` is set as an authorized redirect URI.
