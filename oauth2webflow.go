@@ -1,7 +1,8 @@
 // Package oauth2webflow allows you to authorize with an OAuth2 Authorization
-// Code Flow without copy and pasting codes. It opens the AuthCodeURL with the
-// system browser and listens for a http://localhost:5000 callback. If the flow
-// completes, it returns an oauth2.Token, automatically closing the browser window.
+// Code Flow endpoint without having to copy and paste codes from the callback
+// url. It opens the authorize url with the system browser and listens for a
+// http://localhost:5000 callback. If the flow completes, it returns an
+// oauth2.Token and automatically closes the browser window.
 package oauth2webflow
 
 import (
@@ -18,8 +19,8 @@ import (
 // BrowserAuthCodeFlow attempts the OAuth2 Authorization Code Flow by opening
 // the AuthCodeURL given in oauth2.Config with the system browser and the
 // RedirectURL set as http://localhost:5000. It then listens for the callback
-// and if the flow completes, it returns an oauth2.Token, automatically closing
-// the browser window.
+// and if the flow completes, it returns an oauth2.Token and automatically
+// closes the browser window.
 func BrowserAuthCodeFlow(ctx context.Context, conf *oauth2.Config) (*oauth2.Token, error) {
 	var token *oauth2.Token
 	secretState := randomString(10)
