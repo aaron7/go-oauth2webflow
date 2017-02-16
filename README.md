@@ -1,6 +1,8 @@
 go-oauth2webflow
 =============
 
+[![GoDoc](https://godoc.org/github.com/aaron7/go-oauth2webflow?status.png)](https://godoc.org/github.com/aaron7/go-oauth2webflow)
+
 This simple package allows you to authorize with an OAuth2 Authorization Code Flow
 endpoint without copying and pasting codes. It uses [golang.org/x/oauth2](https://golang.org/x/oauth2).
 
